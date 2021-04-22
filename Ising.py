@@ -50,6 +50,9 @@ def RBMLearn(h, alpha, learning_rate, n_samples, n_iter):
     return gs, start, end, n_iter
 
 
+  
+## RUN RBMLearn  
+  
 L = 16
 h = [0.5,1,2]
 a = [1,2,3,4]
@@ -77,24 +80,21 @@ for it in range(len(h)):
       
       return exact_gs_energy
 
+    
+    RBMLearn(h[it], a[i], 0.02, 600, 600)
 
+    # import the data from log file
+    data=json.load(open("Ising1D.log"))
 
-#RUN RBMLearn
+    iters= []
+    energy_RBM = []
 
-RBMLearn(h[it], a[i], 0.02, 600, 600)
+    EGS[it] = exact_gs_energy(ha)
 
-# import the data from log file
-data=json.load(open("Ising1D.log"))
+    for iteration in data["Output"]:
+        iters.append(iteration["Iteration"])
+        energy_RBM.append(iteration["Energy"]["Mean"])
 
-iters= []
-energy_RBM = []
+    E_NQS = energy_RBM[len(iters)-1]
 
-EGS[it] = exact_gs_energy(ha)
-
-for iteration in data["Output"]:
-    iters.append(iteration["Iteration"])
-    energy_RBM.append(iteration["Energy"]["Mean"])
-
-E_NQS = energy_RBM[len(iters)-1]
-
-err_relative[it].append(abs((E_NQS-EGS[it])/(EGS[it])))
+    err_relative[it].append(abs((E_NQS-EGS[it])/(EGS[it]))
