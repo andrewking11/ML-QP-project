@@ -1,0 +1,49 @@
+!pip install netket
+
+# Import netket library
+import netket as nk
+
+# Helper libraries
+import numpy as np
+import matplotlib.pyplot as plt
+import json
+import time
+
+## RBM Ansatz
+
+def maIsing(h,alpha):
+  #define chain lattice
+  g = nk.graph.Hypercube(length=L, n_dim=1, pbc=True)
+
+  #spin-based Hamiltonian
+  hi = nk.hilbert.Spin(s=0.5, graph=g)
+  ha = nk.operator.Ising(hilbert=hi, h=h, J=1.0)
+
+  ma = nk.machine.RbmSpin(alpha=alpha, hilbert=nk.hilbert.Spin(s=0.5, graph=g))
+  return ma
+
+def RBMLearn(h, alpha, learning_rate, n_samples, n_iter):
+
+    ma = maIsing(h=h, alpha=alpha)
+    ma.init_random_parameters(seed=123, sigma=0.01)
+
+  # Sampler
+    sa = nk.sampler.MetropolisExchange(machine=ma)
+    
+  # Optimizer
+    op = nk.optimizer.Sgd(learning_rate=learning_rate)
+  # Stochastic reconfiguration
+    gs = nk.variational.Vmc(
+      hamiltonian=ha,
+      sampler=sa,
+      optimizer=op,
+      n_samples=n_samples,
+      diag_shift=0.1,
+      use_iterative=True,
+      method='Sr')
+    
+    start = time.time()
+    gs.run(out='Ising1D', n_iter=n_iter)
+    end = time.time()
+
+    return gs, start, end, n_iter
