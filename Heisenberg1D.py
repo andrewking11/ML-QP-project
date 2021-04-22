@@ -51,11 +51,10 @@ def RBMHeis(alpha, learning_rate, n_samples, n_iter):
     return gs, start, end, n_iter
   
   
-  ##RUN RBMHeis
+##RUN RBMHeis
 
 L = 16
 a = [1,2,3,4]
-#color = ['orange', 'red', 'green']
 E_NQS = []
 EGS = []
 err_relative = []
